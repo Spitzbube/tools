@@ -9,8 +9,11 @@ FAPI_SRC=`pwd`/fapi
 NCPUS=`cat /proc/cpuinfo | grep processor | wc -l`
 
 build_image() {
+#   make -C ${KERNEL_SRC} ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} clean
    make -C ${KERNEL_SRC} ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} mb86hxx_defconfig
    make -C ${KERNEL_SRC} ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} -j${NCPUS}
+#   make -C ${KERNEL_SRC} ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} -j${NCPUS} zImage
+#   make -C ${KERNEL_SRC} ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} -j${NCPUS} modules
    make -C ${KERNEL_SRC} ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} INSTALL_MOD_STRIP=1 INSTALL_MOD_PATH=${KERNEL_SRC}/usr/initramfs/modules modules_install
    mkimage -A arm -O linux -T kernel -C none -a 0x20008000 -e 0x20008000 -n "Linux kernel" -d ${KERNEL_SRC}/arch/arm/boot/zImage /srv/tftp/mb86h60/uImage
    cp ${KERNEL_SRC}/arch/arm/boot/dts/mb86hxx.dtb /srv/tftp/mb86h60/mb86hxx.dtb
@@ -35,7 +38,7 @@ build_initramfs() {
 }
 
 build_image
-build_fapi_drivers
+#build_fapi_drivers
 #build_fapex_drivers
 build_initramfs
 
